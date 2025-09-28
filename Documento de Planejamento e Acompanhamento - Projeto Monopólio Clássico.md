@@ -95,10 +95,10 @@
 
 **3.2. Estimativa Paramétrica (APF/COCOMO)**
 
-* **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **85**.
-* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 85 \* 60 ≈ **5.1 KLOC**
+* **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **146**.
+* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
 * **COCOMO (Projeto Simples/Médio) =** `$Esforço = 3,0 \times KLOC^{1,12}$`  
-    $Esforço = 3,0 \times (5.1)^{1,12} \approx \textbf{16,8 Homens-Mês}$
+    $Esforço = 3,0 \times (8,76)^{1,12} \approx \textbf{30,2 Homens-Mês}$
 
 **3.3. Detalhamento dos Cálculos**
 
@@ -112,26 +112,37 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 | - Rolar dados | 1 | Simples | 3 | 3 |
 | - Comprar propriedade | 1 | Média | 4 | 4 |
 | - Pagar aluguel | 1 | Simples | 3 | 3 |
+| - Ações das cartas Sorte/Cofre | 1 | Média | 4 | 4 |
+| - Configuração inicial do jogo | 1 | Média | 4 | 4 |
+| - Seleção de modo de jogo | 1 | Simples | 3 | 3 |
 | **Saídas Externas (SE)** | | | | |
 | - Atualizar posição do peão | 1 | Simples | 4 | 4 |
 | - Exibir informações do jogador | 1 | Média | 5 | 5 |
 | - Resultado das cartas | 1 | Média | 5 | 5 |
 | - Condições de vitória/derrota | 1 | Complexa | 7 | 7 |
+| - Atualização do HUD | 1 | Média | 5 | 5 |
+| - Relatórios de transações | 1 | Simples | 4 | 4 |
+| - Interface do menu principal | 1 | Média | 5 | 5 |
 | **Consultas Externas (CE)** | | | | |
 | - Consultar propriedades | 1 | Simples | 3 | 3 |
 | - Consultar estado do jogo | 1 | Média | 4 | 4 |
+| - Status do jogador atual | 1 | Simples | 3 | 3 |
+| - Consultar regras do jogo | 1 | Simples | 3 | 3 |
 | **Arquivos Lógicos Internos (ALI)** | | | | |
 | - Dados do jogador | 1 | Média | 10 | 10 |
 | - Dados das propriedades | 1 | Complexa | 15 | 15 |
 | - Estado do tabuleiro | 1 | Média | 10 | 10 |
 | - Lógica da IA | 1 | Complexa | 15 | 15 |
-| **TOTAL PFNA** | | | | **85** |
+| - Configurações do jogo | 1 | Simples | 7 | 7 |
+| - Dados das cartas Sorte/Cofre | 1 | Média | 10 | 10 |
+| - Sistema de turnos | 1 | Média | 10 | 10 |
+| **TOTAL PFNA** | | | | **146** |
 
 **Passo 2: Conversão PFNA → KLOC**
 
 * **Fator de Conversão para GDScript:** ~60 linhas de código por ponto de função
 * **Cálculo:** KLOC = PFNA × Fator de Conversão ÷ 1000
-* **KLOC = 85 × 60 ÷ 1000 = 5100 ÷ 1000 = 5,1 KLOC**
+* **KLOC = 146 × 60 ÷ 1000 = 8760 ÷ 1000 = 8,76 KLOC**
 
 **Passo 3: Aplicação do Modelo COCOMO**
 
@@ -142,10 +153,10 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
   * b = 1,12 (expoente de escala)
 
 **Cálculo Detalhado:**
-1. $KLOC^{1,12} = 5,1^{1,12}$
-2. $5,1^{1,12} = 5,604$ (usando logaritmos: $e^{1,12 \times \ln(5,1)}$)
-3. $Esforço = 3,0 \times 5,604 = 16,812$
-4. **Esforço Final = 16,8 Homens-Mês** (arredondado)
+1. $KLOC^{1,12} = 8,76^{1,12}$
+2. $8,76^{1,12} = 10,074$ (usando logaritmos: $e^{1,12 \times \ln(8,76)}$)
+3. $Esforço = 3,0 \times 10,074 = 30,22$
+4. **Esforço Final = 30,2 Homens-Mês** (arredondado)
 
 **Justificativa do Modelo Orgânico:**
 * Equipe pequena (6 pessoas)
@@ -158,21 +169,21 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 #### **4.0 Custo e Orçamento (Cálculo por Homem-Hora)**
 
 **1. Conversão de Esforço para Homem-Hora:**
-* A estimativa de esforço via COCOMO foi de **16,8 Homens-Mês**.
+* A estimativa de esforço via COCOMO foi de **30,2 Homens-Mês**.
 * Considerando um mês de trabalho padrão com 22 dias úteis e 8 horas por dia (1 Mês = 176 horas):
-* **Esforço Total em Horas =** 16,8 Meses * 176 Horas/Mês = **2957 Homens-Hora**.
+* **Esforço Total em Horas =** 30,2 Meses * 176 Horas/Mês = **5315 Homens-Hora**.
 
 **2. Definição do Custo da Mão de Obra:**
 * Adotaremos um valor simbólico para a equipe de desenvolvimento de **R$ 25,00 por Homem-Hora**.
 
 **3. Cálculo do Custo Total:**
 * **Custo Total do Projeto =** Esforço Total em Horas * Valor da Hora
-* Custo Total = 2957 Horas * R$ 25,00/Hora = **R$ 73.925,00**
+* Custo Total = 5315 Horas * R$ 25,00/Hora = **R$ 132.875,00**
 
 **4. Definição do Orçamento:**
 * O orçamento é o custo total acrescido de uma margem de 15% para contingências.
 * **Orçamento Total =** Custo Total * 1,15
-* Orçamento Total = R$ 73.925,00 * 1,15 = **R$ 85.014,00**
+* Orçamento Total = R$ 132.875,00 * 1,15 = **R$ 152.806,00**
 
 ---
 
