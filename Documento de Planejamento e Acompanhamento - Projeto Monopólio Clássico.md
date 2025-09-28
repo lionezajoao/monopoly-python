@@ -40,14 +40,19 @@
     * 1.3 Análise de Riscos
 * **2.0 Design do Jogo**
     * 2.1 Definição das Regras do Jogo
-    * 2.2 Criação de Placeholders Visuais
+    * 2.2 Design de Interface de Usuário (UI) e Experiência do Usuário (UX)
     * 2.3 Design da Lógica da IA
+
 * **3.0 Desenvolvimento do Produto**
     * 3.1 Implementação do Tabuleiro e Movimentação
-    * 3.2 Implementação da Lógica de Propriedades
-    * 3.3 Implementação do Sistema de Turnos
-    * 3.4 Implementação da Interface Gráfica (HUD)
-    * 3.5 Desenvolvimento da Inteligência Artificial (IA)
+    * 3.2 Implementação da Lógica das Cartas Sorte e Cofre
+    * 3.3 Implementação da Lógica de Propriedades
+    * 3.4 Implementação do Sistema de Turnos
+    * 3.5 Implementação da Interface Gráfica (HUD)
+    * 3.6 Desenvolvimento da Inteligência Artificial (IA)
+    * 3.7 Implementação das Condições de Vitória e Derrota
+    * 3.8 Criação de Placeholders Visuais
+
 * **4.0 Testes e Validação**
     * 4.1 Testes de Funcionalidades (Multiplayer Local)
     * 4.2 Testes da IA e Modos de Jogo
@@ -63,41 +68,111 @@
 
 | Pacote de Trabalho / História de Usuário | Estimativa Final (Story Points) |
 | :--- | :---: |
-| Estrutura Visual (Tabuleiro e HUD) | 5 |
-| Implementação do Movimento do Peão | 8 |
-| Implementação da Lógica de Propriedades | 8 |
-| Implementação do Sistema de Turnos | 5 |
-| **Desenvolvimento da Lógica da IA** | **13** |
-| **Integração da IA e Modos de Jogo** | **8** |
-| **Total de Esforço Estimado para o Projeto** | **47** |
+| **1.0 Gerenciamento e Planejamento** |  |
+| 1.1 Definição do Escopo | 2 |
+| 1.2 Elaboração da EAP e Cronograma | 3 |
+| 1.3 Análise de Riscos | 2 |
+| **2.0 Design do Jogo** |  |
+| 2.1 Definição das Regras do Jogo | 3 |
+| 2.2 Design de Interface de Usuário (UI/UX) | 5 |
+| 2.3 Design da Lógica da IA | 5 |
+| **3.0 Desenvolvimento do Produto** |  |
+| 3.1 Implementação do Tabuleiro e Movimentação | 8 |
+| 3.2 Implementação da Lógica das Cartas Sorte e Cofre | 8 |
+| 3.3 Implementação da Lógica de Propriedades | 8 |
+| 3.4 Implementação do Sistema de Turnos | 5 |
+| 3.5 Implementação da Interface Gráfica (HUD) | 5 |
+| 3.6 Desenvolvimento da Inteligência Artificial (IA) | 13 |
+| 3.7 Implementação das Condições de Vitória e Derrota | 5 |
+| 3.8 Criação de Placeholders Visuais | 3 |
+| **4.0 Testes e Validação** |  |
+| 4.1 Testes de Funcionalidades (Multiplayer Local) | 5 |
+| 4.2 Testes da IA e Modos de Jogo | 5 |
+| **5.0 Entrega** |  |
+| 5.1 Geração das Builds Executáveis | 2 |
+| 5.2 Elaboração da Documentação e Apresentações | 3 |
+| **Total de Esforço Estimado para o Projeto** | **98** |
 
 **3.2. Estimativa Paramétrica (APF/COCOMO)**
 
-* **PFNA (Pontos de Função Não Ajustados):** A lógica da IA aumenta o número e a complexidade dos elementos, elevando o PFNA para aproximadamente **55**.
-* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 55 \* 60 ≈ **3.3 KLOC**
+* **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **85**.
+* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 85 \* 60 ≈ **5.1 KLOC**
 * **COCOMO (Projeto Simples/Médio) =** `$Esforço = 3,0 \times KLOC^{1,12}$`  
-    $Esforço = 3,0 \times (3.3)^{1,12} \approx \textbf{11,5 Homens-Mês}$
+    $Esforço = 3,0 \times (5.1)^{1,12} \approx \textbf{16,8 Homens-Mês}$
+
+**3.3. Detalhamento dos Cálculos**
+
+**Passo 1: Cálculo do PFNA (Pontos de Função Não Ajustados)**
+
+Os Pontos de Função são calculados com base em 5 componentes principais:
+
+| Componente | Quantidade | Complexidade | Peso | Subtotal |
+|:-----------|:----------:|:------------:|:----:|:--------:|
+| **Entradas Externas (EE)** | | | | |
+| - Rolar dados | 1 | Simples | 3 | 3 |
+| - Comprar propriedade | 1 | Média | 4 | 4 |
+| - Pagar aluguel | 1 | Simples | 3 | 3 |
+| **Saídas Externas (SE)** | | | | |
+| - Atualizar posição do peão | 1 | Simples | 4 | 4 |
+| - Exibir informações do jogador | 1 | Média | 5 | 5 |
+| - Resultado das cartas | 1 | Média | 5 | 5 |
+| - Condições de vitória/derrota | 1 | Complexa | 7 | 7 |
+| **Consultas Externas (CE)** | | | | |
+| - Consultar propriedades | 1 | Simples | 3 | 3 |
+| - Consultar estado do jogo | 1 | Média | 4 | 4 |
+| **Arquivos Lógicos Internos (ALI)** | | | | |
+| - Dados do jogador | 1 | Média | 10 | 10 |
+| - Dados das propriedades | 1 | Complexa | 15 | 15 |
+| - Estado do tabuleiro | 1 | Média | 10 | 10 |
+| - Lógica da IA | 1 | Complexa | 15 | 15 |
+| **TOTAL PFNA** | | | | **85** |
+
+**Passo 2: Conversão PFNA → KLOC**
+
+* **Fator de Conversão para GDScript:** ~60 linhas de código por ponto de função
+* **Cálculo:** KLOC = PFNA × Fator de Conversão ÷ 1000
+* **KLOC = 85 × 60 ÷ 1000 = 5100 ÷ 1000 = 5,1 KLOC**
+
+**Passo 3: Aplicação do Modelo COCOMO**
+
+**Modelo Utilizado:** COCOMO Básico (Orgânico/Simples)
+* **Fórmula:** $Esforço = a \times KLOC^b$
+* **Coeficientes para Projeto Orgânico:**
+  * a = 3,0 (coeficiente base)
+  * b = 1,12 (expoente de escala)
+
+**Cálculo Detalhado:**
+1. $KLOC^{1,12} = 5,1^{1,12}$
+2. $5,1^{1,12} = 5,604$ (usando logaritmos: $e^{1,12 \times \ln(5,1)}$)
+3. $Esforço = 3,0 \times 5,604 = 16,812$
+4. **Esforço Final = 16,8 Homens-Mês** (arredondado)
+
+**Justificativa do Modelo Orgânico:**
+* Equipe pequena (6 pessoas)
+* Problema bem compreendido (jogo clássico)
+* Ambiente de desenvolvimento estável (Godot)
+* Requisitos relativamente estáveis
 
 ---
 
 #### **4.0 Custo e Orçamento (Cálculo por Homem-Hora)**
 
 **1. Conversão de Esforço para Homem-Hora:**
-* A estimativa de esforço via COCOMO foi de **11,5 Homens-Mês**.
+* A estimativa de esforço via COCOMO foi de **16,8 Homens-Mês**.
 * Considerando um mês de trabalho padrão com 22 dias úteis e 8 horas por dia (1 Mês = 176 horas):
-* **Esforço Total em Horas =** 11,5 Meses * 176 Horas/Mês = **2024 Homens-Hora**.
+* **Esforço Total em Horas =** 16,8 Meses * 176 Horas/Mês = **2957 Homens-Hora**.
 
 **2. Definição do Custo da Mão de Obra:**
 * Adotaremos um valor simbólico para a equipe de desenvolvimento de **R$ 25,00 por Homem-Hora**.
 
 **3. Cálculo do Custo Total:**
 * **Custo Total do Projeto =** Esforço Total em Horas * Valor da Hora
-* Custo Total = 2024 Horas * R$ 25,00/Hora = **R$ 50.600,00**
+* Custo Total = 2957 Horas * R$ 25,00/Hora = **R$ 73.925,00**
 
 **4. Definição do Orçamento:**
 * O orçamento é o custo total acrescido de uma margem de 15% para contingências.
 * **Orçamento Total =** Custo Total * 1,15
-* Orçamento Total = R$ 50.600,00 * 1,15 = **R$ 58.190,00**
+* Orçamento Total = R$ 73.925,00 * 1,15 = **R$ 85.014,00**
 
 ---
 
