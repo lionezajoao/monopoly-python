@@ -1,7 +1,7 @@
 # **Documento de Planejamento e Acompanhamento - Projeto Monopólio Clássico**
 
 **Disciplina:** Gerência de Projeto e Manutenção de Software
-**Equipe:** Gabriel Pinho, Erivelton Campos, João Pedro Barboza, Breno, Alexandre Colmenero e Leonardo Lima.
+**Equipe:** Gabriel Pinho, Erivelton Campos, João Pedro Barboza, Breno de Carvalho, Alexandre Colmenero e Leonardo Lima.
 
 
 ---
@@ -69,29 +69,29 @@
 | Pacote de Trabalho / História de Usuário | Estimativa Final (Story Points) |
 | :--- | :---: |
 | **1.0 Gerenciamento e Planejamento** |  |
-| 1.1 Definição do Escopo | 2 |
+| 1.1 Definição do Escopo | 4 |
 | 1.2 Elaboração da EAP e Cronograma | 3 |
 | 1.3 Análise de Riscos | 2 |
 | **2.0 Design do Jogo** |  |
 | 2.1 Definição das Regras do Jogo | 3 |
-| 2.2 Design de Interface de Usuário (UI/UX) | 5 |
+| 2.2 Design de Interface de Usuário (UI/UX) | 6 |
 | 2.3 Design da Lógica da IA | 5 |
 | **3.0 Desenvolvimento do Produto** |  |
-| 3.1 Implementação do Tabuleiro e Movimentação | 8 |
+| 3.1 Implementação do Tabuleiro e Movimentação | 10 |
 | 3.2 Implementação da Lógica das Cartas Sorte e Cofre | 8 |
 | 3.3 Implementação da Lógica de Propriedades | 8 |
 | 3.4 Implementação do Sistema de Turnos | 5 |
 | 3.5 Implementação da Interface Gráfica (HUD) | 5 |
-| 3.6 Desenvolvimento da Inteligência Artificial (IA) | 13 |
+| 3.6 Desenvolvimento da Inteligência Artificial (IA) | 14 |
 | 3.7 Implementação das Condições de Vitória e Derrota | 5 |
-| 3.8 Criação de Placeholders Visuais | 3 |
+| 3.8 Criação de Placeholders Visuais | 4 |
 | **4.0 Testes e Validação** |  |
 | 4.1 Testes de Funcionalidades (Multiplayer Local) | 5 |
 | 4.2 Testes da IA e Modos de Jogo | 5 |
 | **5.0 Entrega** |  |
-| 5.1 Geração das Builds Executáveis | 2 |
-| 5.2 Elaboração da Documentação e Apresentações | 3 |
-| **Total de Esforço Estimado para o Projeto** | **98** |
+| 5.1 Geração das Builds Executáveis | 3 |
+| 5.2 Elaboração da Documentação e Apresentações | 4 |
+| **Total de Esforço Estimado para o Projeto** | **99** |
 
 **3.2. Estimativa Paramétrica (APF/COCOMO)**
 
@@ -187,7 +187,9 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 
 ---
 
-#### **5.0 Cronograma (Gantt) - Realista com Datas da Disciplina**
+#### **5.0 Cronograma - Realista com Datas da Disciplina**
+
+**5.1. Sprints**
 
 | ID | Atividade / Sprint | Duração | Início | Fim | Marcos / Entregas Importantes |
 | :-- | :--- | :--- | :--- | :--- | :--- |
@@ -197,6 +199,34 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 | 4 | **Sprint 3: Desenvolvimento da IA** | 2 sem | 15/10/25 | 27/10/25 | **Segunda Apresentação dos Trabalhos (28/10)** |
 | 5 | **Sprint 4: Integração da IA** | 2 sem | 29/10/25 | 11/11/25 | Carga de trabalho reduzida (semana da Prova 2 - 13/11). |
 | 6 | **Sprint 5: Polimento e Testes Finais**| 2 sem | 12/11/25 | 24/11/25 | **Terceira Apresentação Final (25/11)** |
+
+**5.2. Gantt**
+
+| ID | Atividade | Duração | Dependência | Início Mínimo | Término Mínimo | Início Máximo | Término Máximo | Folga
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 1.1  | Definição do Escopo | 4 | — | 0 | 4 | 0 | 4 | 0 |
+| 1.2  | EAP e Cronograma | 3 | 1.1 | 4 | 7 | 41 | 44 | 37 |
+| 1.3  | Análise de Riscos | 2 | 1.1  | 4 | 6 | 44 | 46 | 40 |
+| 2.1  | Definição das Regras | 3 | 1.1 | 4 | 7 | 4 | 7 | 0 |
+| 2.2  | Design de UI/UX | 6 | 2.1 | 7 | 13 | 7 | 13 | 0 |
+| 2.3  | Design da IA | 5 | 2.1 | 7 | 12 | 27 | 32 | 20 |
+| 3.1  | Tabuleiro e Movimentação | 10 | 2.1, 3.8 | 17  | 27 | 17 | 27 | 0 |
+| 3.2  | Lógica das Cartas | 8 | 2.1 | 7 | 15 | 38 | 46 | 31 |
+| 3.3  | Lógica de Propriedades | 8 | 2.1 | 7 | 15 | 33 | 41 | 26 |
+| 3.4  | Sistema de Turnos | 5 | 3.1 | 27 | 32 | 27 | 32 | 0 |
+| 3.5  | HUD | 5 | 2.2 | 13 | 18 | 41 | 46 | 28 |
+| 3.6  | IA | 14 | 2.3, 3.1, 3.4 | 32 | 46 | 32 | 46 | 0 |
+| 3.7  | Condições de Vitória/Derrota | 5 | 3.3, 3.4 | 32 | 37 | 41 | 46 | 9 |
+| 3.8  | Placeholders Visuais | 4 | 2.2 | 13 | 17 | 13 | 17 | 0 |
+| 4.1  | Testes Funcionalidades | 5 | 3.1 até 3.5, 3.7 | 37 | 42 | 46 | 51 | 9 |
+| 4.2  | Testes da IA | 5 | 3.6 | 46 | 51 | 46 | 51 | 0 |
+| 5.1  | Builds Executáveis | 3 | 4.1, 4.2 | 51 | 54 | 51 | 54 | 0 |
+| 5.2  | Documentação e Apresentações | 4 | 5.1 | 54 | 58 | 54 | 58 | 0 |
+
+**Caminho Crítico (CPM):** 1.1 → 2.1 → 2.2 → 3.8 → 3.1 → 3.4 → 3.6 → 4.2 → 5.1 → 5.2
+
+![Gantt](gantt.jpeg)
+
 
 ---
 
