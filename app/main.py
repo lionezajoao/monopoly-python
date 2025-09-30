@@ -18,7 +18,7 @@ FONTE_TITULO = pygame.font.SysFont('Arial', 30, True)
 
 # --- CARREGAMENTO E REDIMENSIONAMENTO DO TABULEIRO ---
 try:
-    imagem_original = pygame.image.load('tabuleiro.jpg')
+    imagem_original = pygame.image.load('app/static/tabuleiro.jpg')
     largura_original, altura_original = imagem_original.get_size()
     
     LADO_MAXIMO = ALTURA_TELA # O tabuleiro usará toda a altura disponível
