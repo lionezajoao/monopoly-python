@@ -1,8 +1,8 @@
 # **Documento de Planejamento e Acompanhamento - Projeto Monopólio Clássico**
 
 **Disciplina:** Gerência de Projeto e Manutenção de Software
-**Equipe:** Gabriel Pinho, Erivelton Campos, João Pedro Barboza, Breno de Carvalho, Alexandre Colmenero e Leonardo Lima.
 
+**Equipe:** Alexandre Colmenero, Breno de Carvalho, Erivelton Campos, Gabriel Pinho, João Pedro Barboza e Leonardo Lima.
 
 ---
 
@@ -97,7 +97,7 @@
 
 * **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **146**.
 * **KLOC (vs Python @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
-* **COCOMO (Projeto Simples/Médio) =** `$Esforço = 3,0 \times KLOC^{1,12}$`  
+* **COCOMO (Projeto Simples/Médio) =** $Esforço = 3,0 \times KLOC^{1,12}$  
     $Esforço = 3,0 \times (8,76)^{1,12} \approx \textbf{30,2 Homens-Mês}$
 
 **3.3. Detalhamento dos Cálculos**
@@ -226,7 +226,7 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 **Caminho Crítico (CPM):** 1.1 → 2.1 → 2.2 → 3.8 → 3.1 → 3.4 → 3.6 → 4.2 → 5.1 → 5.2
 
 ![Gantt](gantt.jpeg)
-
+*Gráfico 1: Gráfico Gantt*
 
 ---
 
@@ -314,6 +314,12 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 
 * **Gráfico de Burndown:** Será gerado ao final de cada Sprint para monitorar o progresso do trabalho restante versus o tempo.
 * **Análise de Valor Agregado (AVA):** Será calculada ao final de cada Sprint para comparar o trabalho realizado (EV) com o planejado (PV) e o custo (AC), gerando os indicadores SPI e CPI.
+
+![Gantt](comparacao-esforco.jpg)
+*Gráfico 2: Comparação de Esforço (Sprint 0)*
+
+![Gantt](ava.jpg)
+*Gráfico 3: Indicadores de Desempenho e Conclusão da Perfomance*
 
 ---
 
