@@ -27,7 +27,7 @@
 
 **Requisitos Não-Funcionais:**
 * **RNF01:** A interface do jogo deve ser funcional e clara.
-* **RNF02:** O jogo será desenvolvido na engine Godot 4 com GDScript.
+* **RNF02:** O jogo será desenvolvido em Python usando Pygame.
 * **RNF03:** O projeto será versionado com Git e hospedado no GitHub.
 
 ---
@@ -96,7 +96,7 @@
 **3.2. Estimativa Paramétrica (APF/COCOMO)**
 
 * **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **146**.
-* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
+* **KLOC (vs Python @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
 * **COCOMO (Projeto Simples/Médio) =** `$Esforço = 3,0 \times KLOC^{1,12}$`  
     $Esforço = 3,0 \times (8,76)^{1,12} \approx \textbf{30,2 Homens-Mês}$
 
@@ -140,7 +140,7 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 
 **Passo 2: Conversão PFNA → KLOC**
 
-* **Fator de Conversão para GDScript:** ~60 linhas de código por ponto de função
+* **Fator de Conversão para Python:** ~60 linhas de código por ponto de função
 * **Cálculo:** KLOC = PFNA × Fator de Conversão ÷ 1000
 * **KLOC = 146 × 60 ÷ 1000 = 8760 ÷ 1000 = 8,76 KLOC**
 
@@ -161,7 +161,7 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 **Justificativa do Modelo Orgânico:**
 * Equipe pequena (6 pessoas)
 * Problema bem compreendido (jogo clássico)
-* Ambiente de desenvolvimento estável (Godot)
+* Ambiente de desenvolvimento estável (Python)
 * Requisitos relativamente estáveis
 
 ---
@@ -320,8 +320,9 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 #### **8.0 Versão Parcial do Produto (Para a 1ª Entrega)**
 
 A primeira entrega consiste no resultado do **Sprint 1**, que é o MVP mínimo para demonstrar o conceito.
-* Um projeto Godot funcional e versionado no Git.
+* Um projeto Python funcional e versionado no Git.
 * A cena do tabuleiro com placeholders visuais e marcadores de posição.
 * A cena do peão do jogador.
 * O HUD com o botão de "Rolar Dado" e o label de resultado.
+
 * **Funcionalidade Principal:** O jogador pode clicar no botão, e o peão se move corretamente pelo tabuleiro, dando a volta quando necessário.
