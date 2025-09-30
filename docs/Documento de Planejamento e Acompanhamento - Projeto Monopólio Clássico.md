@@ -97,9 +97,9 @@
 **3.2. Estimativa Paramétrica (APF/COCOMO)**
 
 * **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **146**.
-* **KLOC (vs Python @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
-* **COCOMO (Projeto Simples/Médio) =** $Esforço = 3,0 \times KLOC^{1,12}$  
-    $Esforço = 3,0 \times (8,76)^{1,12} \approx \textbf{30,2 Homens-Mês}$
+* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
+* **COCOMO (Projeto Simples/Orgânico) =** `$Esforço = 2,4 \times KLOC^{1,05}$`  
+    $Esforço = 2,4 \times (8,76)^{1,05} \approx \textbf{22,1 Homens-Mês}$
 
 **3.3. Detalhamento dos Cálculos**
 
