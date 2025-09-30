@@ -332,3 +332,58 @@ A primeira entrega consiste no resultado do **Sprint 1**, que é o MVP mínimo p
 * O HUD com o botão de "Rolar Dado" e o label de resultado.
 
 * **Funcionalidade Principal:** O jogador pode clicar no botão, e o peão se move corretamente pelo tabuleiro, dando a volta quando necessário.
+
+---
+
+#### **9.0 Plano e organização da equipe**
+
+#### 1. Papel de Cada Membro
+
+A divisão de papéis e responsabilidades foi definida com base nas afinidades e contribuições iniciais de cada integrante durante a fase de planejamento.
+
+* **Leonardo Lima (Gerente de Projeto / Product Owner):** Responsável por gerenciar o quadro de tarefas no Jira, organizar o backlog do produto, garantir que os entregáveis estejam alinhados com os objetivos e manter a documentação do projeto atualizada.
+* **Gabriel Pinho (Desenvolvedor Principal):** Lidera a implementação da lógica central do jogo e da interface gráfica, definindo as regras de negócio diretamente no código e garantindo a funcionalidade do produto.
+* **Erivelton Campos (Scrum Master / Analista de Planejamento):** Responsável por facilitar a organização da equipe, definir e acompanhar o cronograma, e analisar métricas de progresso do projeto, como a análise de valor agregado.
+* **João Pedro Barboza (Dev/DevOps):** Encarregado de configurar e manter a infraestrutura de desenvolvimento, incluindo a criação e gerenciamento do repositório no GitHub, além de prestar suporte geral à equipe.
+* **Breno de Carvalho (Analista de Projeto):** Focado na elaboração de artefatos de planejamento detalhados, como a definição do caminho crítico e a criação do gráfico de Gantt para visualização do cronograma.
+* **Alexandre Colmenero (Analista de Requisitos e Estimativas):** Responsável por definir o escopo inicial do projeto e realizar as estimativas de esforço, como o cálculo utilizando o modelo COCOMO.
+
+---
+
+#### 2. Duração e Entregáveis de Cada Iteração (Sprint)
+
+O projeto foi dividido em 6 iterações (Sprints), cada uma com um objetivo e um entregável claro.
+
+* **Sprint 0: Planejamento (Duração: 4 semanas)**
+    * **Entregável Principal:** Conclusão do Documento de Planejamento do Projeto (EAP, cronograma, análise de riscos, etc.) e configuração inicial do ambiente de trabalho.
+
+* **Sprint 1: MVP "Peão que Anda" (Duração: 1 semana)**
+    * **Entregável Principal:** Uma janela funcional em Pygame que exibe o tabuleiro, um peão, e um botão "Rolar Dados". Ao clicar no botão, o peão se move pelo tabuleiro.
+
+* **Sprint 2: Propriedades e Turnos (Duração: 2 semanas)**
+    * **Entregável Principal:** Implementação da lógica de compra de propriedades e sistema de turnos. O controle passa para o próximo jogador após a jogada.
+
+* **Sprint 3: Desenvolvimento da IA (Duração: 2 semanas)**
+    * **Entregável Principal:** Uma versão inicial da IA que consegue rolar os dados, se mover e tomar a decisão de comprar uma propriedade.
+
+* **Sprint 4: Integração da IA e Modos de Jogo (Duração: 2 semanas)**
+    * **Entregável Principal:** O jogo suporta a configuração de uma partida com jogadores humanos e jogadores controlados pela IA.
+
+* **Sprint 5: Polimento e Testes Finais (Duração: 2 semanas)**
+    * **Entregável Principal:** Versão final do jogo, com testes realizados, bugs conhecidos corrigidos e pronta para a apresentação final.
+
+---
+
+#### 3. Plano de Reuniões de Equipe
+
+Para garantir o alinhamento contínuo, a comunicação e o bom andamento do projeto, a equipe estabeleceu um plano de reuniões recorrentes.
+
+* **Reunião:** Sincronização Semanal (Weekly Sync)
+* **Plataforma:** Discord
+* **Frequência:** Todas as semanas
+* **Duração Média:** 2 horas
+* **Objetivos:**
+    * **Acompanhamento:** Cada membro apresenta o progresso das tarefas designadas na semana anterior.
+    * **Identificação de Bloqueios:** Espaço para discutir quaisquer dificuldades ou impedimentos que estejam travando o progresso de algum membro.
+    * **Planejamento:** Com base no andamento e no backlog, são distribuídas e detalhadas as tarefas para a semana seguinte.
+    * **Alinhamento Geral:** Garantir que todos os membros da equipe compartilhem da mesma visão sobre as prioridades e os próximos passos do projeto.
