@@ -1,6 +1,7 @@
 # **Documento de Planejamento e Acompanhamento - Projeto Monopólio Clássico**
 
-**Disciplina:** Gerência de Projeto e Manutenção de Software
+**Disciplina:** Ge* **COCOMO (Projeto Simples/Orgânico) =** `$Esforço = 2,4 \times KLOC^{1,05}$`  
+    $Esforço = 2,4 \times (8,76)^{1,05} \approx \textbf{22,1 Homens-Mês}$ncia de Projeto e Manutenção de Software
 
 **Equipe:** Alexandre Colmenero, Breno de Carvalho, Erivelton Campos, Gabriel Pinho, João Pedro Barboza e Leonardo Lima.
 
@@ -96,9 +97,9 @@
 **3.2. Estimativa Paramétrica (APF/COCOMO)**
 
 * **PFNA (Pontos de Função Não Ajustados):** Considerando todas as funcionalidades (IA, cartas, condições de vitória, interface completa, testes), o PFNA é estimado em aproximadamente **146**.
-* **KLOC (vs Python @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
-* **COCOMO (Projeto Simples/Médio) =** $Esforço = 3,0 \times KLOC^{1,12}$  
-    $Esforço = 3,0 \times (8,76)^{1,12} \approx \textbf{30,2 Homens-Mês}$
+* **KLOC (vs Python/GDScript @ ~60 LOC/PF) =** 146 \* 60 ≈ **8,76 KLOC**
+* **COCOMO (Projeto Simples/Orgânico) =** `$Esforço = 2,4 \times KLOC^{1,05}$`  
+    $Esforço = 2,4 \times (8,76)^{1,05} \approx \textbf{22,1 Homens-Mês}$
 
 **3.3. Detalhamento dos Cálculos**
 
@@ -149,14 +150,14 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 **Modelo Utilizado:** COCOMO Básico (Orgânico/Simples)
 * **Fórmula:** $Esforço = a \times KLOC^b$
 * **Coeficientes para Projeto Orgânico:**
-  * a = 3,0 (coeficiente base)
-  * b = 1,12 (expoente de escala)
+  * a = 2,4 (coeficiente base)
+  * b = 1,05 (expoente de escala)
 
 **Cálculo Detalhado:**
-1. $KLOC^{1,12} = 8,76^{1,12}$
-2. $8,76^{1,12} = 10,074$ (usando logaritmos: $e^{1,12 \times \ln(8,76)}$)
-3. $Esforço = 3,0 \times 10,074 = 30,22$
-4. **Esforço Final = 30,2 Homens-Mês** (arredondado)
+1. $KLOC^{1,05} = 8,76^{1,05}$
+2. $8,76^{1,05} = 9,186$ (usando logaritmos: $e^{1,05 \times \ln(8,76)}$)
+3. $Esforço = 2,4 \times 9,186 = 22,05$
+4. **Esforço Final = 22,1 Homens-Mês** (arredondado)
 
 **Justificativa do Modelo Orgânico:**
 * Equipe pequena (6 pessoas)
@@ -169,21 +170,21 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 #### **4.0 Custo e Orçamento (Cálculo por Homem-Hora)**
 
 **1. Conversão de Esforço para Homem-Hora:**
-* A estimativa de esforço via COCOMO foi de **30,2 Homens-Mês**.
+* A estimativa de esforço via COCOMO foi de **22,1 Homens-Mês**.
 * Considerando um mês de trabalho padrão com 22 dias úteis e 8 horas por dia (1 Mês = 176 horas):
-* **Esforço Total em Horas =** 30,2 Meses * 176 Horas/Mês = **5315 Homens-Hora**.
+* **Esforço Total em Horas =** 22,1 Meses * 176 Horas/Mês = **3890 Homens-Hora**.
 
 **2. Definição do Custo da Mão de Obra:**
 * Adotaremos um valor simbólico para a equipe de desenvolvimento de **R$ 25,00 por Homem-Hora**.
 
 **3. Cálculo do Custo Total:**
 * **Custo Total do Projeto =** Esforço Total em Horas * Valor da Hora
-* Custo Total = 5315 Horas * R$ 25,00/Hora = **R$ 132.875,00**
+* Custo Total = 3890 Horas * R$ 25,00/Hora = **R$ 97.250,00**
 
 **4. Definição do Orçamento:**
 * O orçamento é o custo total acrescido de uma margem de 15% para contingências.
 * **Orçamento Total =** Custo Total * 1,15
-* Orçamento Total = R$ 132.875,00 * 1,15 = **R$ 152.806,00**
+* Orçamento Total = R$ 97.250,00 * 1,15 = **R$ 111.838,00**
 
 ---
 
