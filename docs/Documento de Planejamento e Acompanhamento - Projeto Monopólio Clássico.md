@@ -315,11 +315,20 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 * **Gráfico de Burndown:** Será gerado ao final de cada Sprint para monitorar o progresso do trabalho restante versus o tempo.
 * **Análise de Valor Agregado (AVA):** Será calculada ao final de cada Sprint para comparar o trabalho realizado (EV) com o planejado (PV) e o custo (AC), gerando os indicadores SPI e CPI.
 
-![Gantt](comparacao-esforco.jpg)
+![Comparativo](comparacao-esforco.jpg)
 *Gráfico 2: Comparação de Esforço (Sprint 0)*
 
-![Gantt](ava.jpg)
+![AVA](ava.jpg)
 *Gráfico 3: Indicadores de Desempenho e Conclusão da Perfomance*
+
+
+* **Sprint 3**
+
+![Comparativo Sprint 3](comparacao-esforco-s3.jpg)
+*Gráfico 4: Comparação de Esforço (Sprint 3)*
+
+![AVA Sprint 3](ava-s3.jpg)
+*Gráfico 5: Indicadores de Desempenho e Conclusão da Perfomance (Sprint 3)*
 
 ---
 
