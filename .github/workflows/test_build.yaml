@@ -70,14 +70,15 @@ jobs:
                   find artifacts -type f -name "*" | head -20
                   echo "Conteúdo detalhado:"
                   ls -la artifacts/*/
+            - name: Install AWS CLI
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install awscli
             - name: Upload to DigitalOcean Spaces
-              uses: s3cmd-sync-action@v1
-              with:
-                  args: --acl-public --recursive
-                  source_dir: artifacts
-                  destination_dir: /
-                  access_key: ${{ secrets.DO_SPACES_ACCESS_KEY }}
-                  secret_key: ${{ secrets.DO_SPACES_SECRET_KEY }}
-                  endpoint: ${{ secrets.DO_SPACES_ENDPOINT }}
-                  bucket: ${{ secrets.DO_SPACES_BUCKET }}
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+              run: |
+                  aws --version
+                  aws s3 sync artifacts/ s3://${{ secrets.DO_SPACES_BUCKET }}/ --acl public-read --endpoint-url https://${{ secrets.DO_SPACES_ENDPOINT }}
 
