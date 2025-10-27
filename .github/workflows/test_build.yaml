@@ -69,5 +69,5 @@ jobs:
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
               run: |
                   aws --version
-                  aws s3 sync artifacts/ s3://${{ secrets.DO_SPACES_BUCKET }}/ --acl public-read --endpoint-url https://${{ secrets.DO_SPACES_ENDPOINT }}
+                  aws s3 sync artifacts/ s3://${{ secrets.DO_SPACES_BUCKET }}/ --acl public-read --endpoint-url ${{ secrets.DO_SPACES_ENDPOINT }}
 
