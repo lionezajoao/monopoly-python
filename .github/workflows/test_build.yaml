@@ -1,0 +1,77 @@
+name: Build Test Executable
+on:
+    push:
+        branches: [release]
+    pull_request:
+        branches: [release]
+permissions:
+    contents: write
+jobs:
+    build:
+        runs-on: windows-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install pygame pyinstaller uv
+            - name: Build executable with PyInstaller
+              run: |
+                  pyinstaller Monopoly.spec
+              shell: bash
+            - name: Rename executable for identification
+              run: |
+                VERSION=$(uv version --short)
+                echo "Version: $VERSION"
+                # If PyInstaller produced a directory (dist/Monopoly), rename the folder;
+                # otherwise rename the single EXE file (dist/Monopoly.exe).
+                if [ -d "dist/Monopoly" ]; then
+                  mv "dist/Monopoly" "dist/Monopoly-${VERSION}"
+                elif [ -f "dist/Monopoly.exe" ]; then
+                  mv "dist/Monopoly.exe" "dist/Monopoly-${VERSION}.exe"
+                else
+                  echo "No known build artifact found in dist/" >&2
+                  ls -la dist || true
+                  exit 1
+                fi
+              shell: bash
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: monopoly-executable
+                  path: dist/Monopoly*
+
+    upload:
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/release' && github.event_name == 'push'
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  path: artifacts
+            - name: List downloaded artifacts (debug)
+              run: |
+                  echo "Estrutura dos artifacts baixados:"
+                  find artifacts -type f -name "*" | head -20
+                  echo "Conteúdo detalhado:"
+                  ls -la artifacts/*/
+            - name: Install AWS CLI
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install awscli
+            - name: Upload to DigitalOcean Spaces
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+              run: |
+                  aws --version
+                  aws s3 sync artifacts/ s3://${{ secrets.DO_SPACES_BUCKET }}/ --acl public-read --endpoint-url ${{ secrets.DO_SPACES_ENDPOINT }}
+

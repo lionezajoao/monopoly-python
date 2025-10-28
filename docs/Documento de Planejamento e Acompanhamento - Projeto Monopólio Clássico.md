@@ -196,7 +196,7 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 | 1 | **Sprint 0: Planejamento** | 4 sem | 26/08/25 | 22/09/25 | Prova 1 (18/09). Documento de Planejamento concluído. |
 | 2 | **Sprint 1: MVP "Peão que Anda"** | 1 sem | 22/09/25 | 29/09/25 | **Primeira Apresentação dos Trabalhos (30/09)** |
 | 3 | **Sprint 2: Propriedades e Turnos** | 2 sem | 01/10/25 | 14/10/25 | Aula de Git (16/10). |
-| 4 | **Sprint 3: Desenvolvimento da IA** | 2 sem | 15/10/25 | 27/10/25 | **Segunda Apresentação dos Trabalhos (28/10)** |
+| 4 | **Sprint 3: Desenvolvimento da IA + Integração CI/CD** | 2 sem | 15/10/25 | 27/10/25 | **Segunda Apresentação dos Trabalhos (28/10)** |
 | 5 | **Sprint 4: Integração da IA** | 2 sem | 29/10/25 | 11/11/25 | Carga de trabalho reduzida (semana da Prova 2 - 13/11). |
 | 6 | **Sprint 5: Polimento e Testes Finais**| 2 sem | 12/11/25 | 24/11/25 | **Terceira Apresentação Final (25/11)** |
 
@@ -315,11 +315,20 @@ Os Pontos de Função são calculados com base em 5 componentes principais:
 * **Gráfico de Burndown:** Será gerado ao final de cada Sprint para monitorar o progresso do trabalho restante versus o tempo.
 * **Análise de Valor Agregado (AVA):** Será calculada ao final de cada Sprint para comparar o trabalho realizado (EV) com o planejado (PV) e o custo (AC), gerando os indicadores SPI e CPI.
 
-![Gantt](comparacao-esforco.jpg)
+![Comparativo](comparacao-esforco.jpg)
 *Gráfico 2: Comparação de Esforço (Sprint 0)*
 
-![Gantt](ava.jpg)
+![AVA](ava.jpg)
 *Gráfico 3: Indicadores de Desempenho e Conclusão da Perfomance*
+
+
+* **Sprint 3**
+
+![Comparativo Sprint 3](comparacao-esforco-s3.jpg)
+*Gráfico 4: Comparação de Esforço (Sprint 3)*
+
+![AVA Sprint 3](ava-s3.jpg)
+*Gráfico 5: Indicadores de Desempenho e Conclusão da Perfomance (Sprint 3)*
 
 ---
 
@@ -363,8 +372,8 @@ O projeto foi dividido em 6 iterações (Sprints), cada uma com um objetivo e um
 * **Sprint 2: Propriedades e Turnos (Duração: 2 semanas)**
     * **Entregável Principal:** Implementação da lógica de compra de propriedades e sistema de turnos. O controle passa para o próximo jogador após a jogada.
 
-* **Sprint 3: Desenvolvimento da IA (Duração: 2 semanas)**
-    * **Entregável Principal:** Uma versão inicial da IA que consegue rolar os dados, se mover e tomar a decisão de comprar uma propriedade.
+* **Sprint 3: Desenvolvimento da IA + Integração CI/CD (Duração: 2 semanas)**
+    * **Entregável Principal:** Uma versão inicial da IA que consegue rolar os dados, se mover e tomar a decisão de comprar uma propriedade. E também a integração com o GitHub Actions.
 
 * **Sprint 4: Integração da IA e Modos de Jogo (Duração: 2 semanas)**
     * **Entregável Principal:** O jogo suporta a configuração de uma partida com jogadores humanos e jogadores controlados pela IA.
@@ -387,3 +396,4 @@ Para garantir o alinhamento contínuo, a comunicação e o bom andamento do proj
     * **Identificação de Bloqueios:** Espaço para discutir quaisquer dificuldades ou impedimentos que estejam travando o progresso de algum membro.
     * **Planejamento:** Com base no andamento e no backlog, são distribuídas e detalhadas as tarefas para a semana seguinte.
     * **Alinhamento Geral:** Garantir que todos os membros da equipe compartilhem da mesma visão sobre as prioridades e os próximos passos do projeto.
+
