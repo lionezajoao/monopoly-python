@@ -26,7 +26,7 @@ jobs:
               shell: bash
             - name: Rename executable for identification
               run: |
-                VERSION=$(uv version)
+                VERSION=$(uv version --short)
                 mv dist/Monopoly.exe dist/Monopoly-${VERSION}.exe
               shell: bash
             - name: Upload artifact
@@ -34,6 +34,32 @@ jobs:
               with:
                   name: monopoly-executable
                   path: dist/Monopoly*
+
+    update-branch:
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  fetch-depth: 0
+                  persist-credentials: true
+            - name: Configure Git user
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+            - name: Update (or create) release branch from main
+              run: |
+                  # Ensure we have the latest main
+                  git fetch origin main
+                  # Create or reset local release branch to origin/main
+                  git checkout -B release origin/main
+                  # Push updated release branch back to origin
+                  git push origin release --force-with-lease
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     release:
         needs: build
         runs-on: ubuntu-latest
@@ -57,24 +83,15 @@ jobs:
                   find artifacts -name "Monopoly*" -type f -exec cp {} release-files/ \;
                   echo "Arquivos preparados para release:"
                   ls -la release-files/
-            - name: Delete existing release
-              run: |
-                  gh release delete latest --yes || true
-                  git tag -d latest || true
-                  git push origin :refs/tags/latest || true
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Create Release
               uses: softprops/action-gh-release@v1
               with:
-                  name: "Latest Release"
-                  tag_name: "latest"
+                  name: "Release v${VERSION}"
+                  tag_name: v${VERSION}
                   files: release-files/*
-                  body: |
-                      Executáveis atualizados automaticamente a partir do commit: ${{ github.sha }}
-                      
-                      **Arquivo executável:**
-                      - `Monopoly-${VERSION}.exe`
                   prerelease: false
+                  generate_release_notes: true
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
