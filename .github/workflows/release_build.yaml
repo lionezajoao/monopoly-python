@@ -35,31 +35,6 @@ jobs:
                   name: monopoly-executable
                   path: dist/Monopoly*
 
-    update-branch:
-        needs: build
-        runs-on: ubuntu-latest
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  fetch-depth: 0
-                  persist-credentials: true
-            - name: Configure Git user
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-            - name: Update (or create) release branch from main
-              run: |
-                  # Ensure we have the latest main
-                  git fetch origin main
-                  # Create or reset local release branch to origin/main
-                  git checkout -B release origin/main
-                  # Push updated release branch back to origin
-                  git push origin release --force-with-lease
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     release:
         needs: build
         runs-on: ubuntu-latest
@@ -85,11 +60,20 @@ jobs:
                   ls -la release-files/
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Determine version
+              run: |
+                  f=$(ls release-files/Monopoly-* 2>/dev/null | head -n1)
+                  if [ -z "$f" ]; then echo "No file found" >&2; exit 1; fi
+                  filename=$(basename "$f")
+                  VERSION=${filename#Monopoly-}
+                  VERSION=${VERSION%.*}
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+              shell: bash
             - name: Create Release
               uses: softprops/action-gh-release@v1
               with:
-                  name: "Release v${VERSION}"
-                  tag_name: v${VERSION}
+                  name: "Release v${{ env.VERSION }}"
+                  tag_name: v${{ env.VERSION }}
                   files: release-files/*
                   prerelease: false
                   generate_release_notes: true
