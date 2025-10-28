@@ -1,0 +1,81 @@
+name: Build Release Executable
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+permissions:
+    contents: write
+jobs:
+    build:
+        runs-on: windows-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install pygame pyinstaller uv
+            - name: Build executable with PyInstaller
+              run: |
+                  pyinstaller Monopoly.spec
+              shell: bash
+            - name: Rename executable for identification
+              run: |
+                VERSION=$(uv version --short)
+                mv dist/Monopoly.exe dist/Monopoly-${VERSION}.exe
+              shell: bash
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: monopoly-executable
+                  path: dist/Monopoly*
+
+    release:
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  path: artifacts
+            - name: List downloaded artifacts (debug)
+              run: |
+                  echo "Estrutura dos artifacts baixados:"
+                  find artifacts -type f -name "*" | head -20
+                  echo "Conteúdo detalhado:"
+                  ls -la artifacts/*/
+            - name: Prepare release files
+              run: |
+                  mkdir -p release-files
+                  find artifacts -name "Monopoly*" -type f -exec cp {} release-files/ \;
+                  echo "Arquivos preparados para release:"
+                  ls -la release-files/
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Determine version
+              run: |
+                  f=$(ls release-files/Monopoly-* 2>/dev/null | head -n1)
+                  if [ -z "$f" ]; then echo "No file found" >&2; exit 1; fi
+                  filename=$(basename "$f")
+                  VERSION=${filename#Monopoly-}
+                  VERSION=${VERSION%.*}
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+              shell: bash
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  name: "Release v${{ env.VERSION }}"
+                  tag_name: v${{ env.VERSION }}
+                  files: release-files/*
+                  prerelease: false
+                  generate_release_notes: true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
