@@ -26,7 +26,7 @@ jobs:
               shell: bash
             - name: Rename executable for identification
               run: |
-                VERSION=$(uv version)
+                VERSION=$(uv version --short)
                 echo "Version: $VERSION"
                 # If PyInstaller produced a directory (dist/Monopoly), rename the folder;
                 # otherwise rename the single EXE file (dist/Monopoly.exe).
