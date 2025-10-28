@@ -1,11 +1,7 @@
 [project]
 requires-python = ">=3.11"
 name = "monopoly-python"
-version = "1.1.0"
+version = "0.1.0"
 dependencies = [
-    "pygame",
-    "pyinstaller>=6.16.0",
+    "pygame"
 ]
-
-[tool.uv]
-package = false
