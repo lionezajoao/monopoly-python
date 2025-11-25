@@ -26,6 +26,7 @@ class Jogador:
         self.dinheiro = 1500
         self.posicao = 0
         self.propriedades = []
+        self.monopolios = set()
         self.esta_preso = False
         self.turnos_na_prisao = 0
 
@@ -101,12 +102,39 @@ class Jogador:
             self.dinheiro -= propriedade.preco
             self.propriedades.append(propriedade)
             propriedade.dono = self
+            self.atualizar_monopolios()
             return True
         return False
 
     def checar_falencia(self):
         """Verifica se o jogador faliu (dinheiro negativo)."""
         return self.dinheiro < 0
+
+    def atualizar_monopolios(self):
+        """Verifica e atualiza os monopólios que o jogador possui."""
+        counts = {}
+        for p in self.propriedades:
+            if p.tipo == 'terreno':
+                counts[p.cor] = counts.get(p.cor, 0) + 1
+        
+        self.monopolios.clear()
+        for cor, total in constants.MONOPOLY_SETS.items():
+            if counts.get(cor, 0) == total:
+                self.monopolios.add(cor)
+
+    def tem_monopolio(self, cor):
+        """Verifica se o jogador possui o monopólio de uma determinada cor."""
+        return cor in self.monopolios
+
+    def get_propriedades_por_cor(self):
+        """Agrupa as propriedades do jogador por cor."""
+        grupos = {}
+        for p in self.propriedades:
+            if p.tipo == 'terreno':
+                if p.cor not in grupos:
+                    grupos[p.cor] = []
+                grupos[p.cor].append(p)
+        return grupos
 
     def desenhar(self, tela, pos_pixel, offset):
         """Desenha o peão do jogador na tela com um deslocamento."""
