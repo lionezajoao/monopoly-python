@@ -15,7 +15,7 @@ import os
 from lib.player import Jogador
 from lib.board import Tabuleiro
 from lib.espaco import Espaco, Propriedade, EspacoAcao
-from lib.ui import Botao, Popup, Log, TextInputBox, desenhar_painel_info
+from lib.ui import Botao, Popup, Log, TextInputBox, desenhar_painel_info, MenuGerenciar, MenuTroca
 from utils import constants
 
 def resource_path(relative_path):
@@ -37,7 +37,7 @@ class Jogo:
         self.tela = pygame.display.set_mode((constants.LARGURA_TELA, constants.ALTURA_TELA))
         pygame.display.set_caption("Seminopoly")
         self.clock = pygame.time.Clock()
-        self.game_state = 'MENU'  # Estados: MENU, JOGANDO, FIM_DE_JOGO
+        self.game_state = 'MENU'  # Estados: MENU, JOGANDO, GERENCIAR, TROCAR, FIM_DE_JOGO
         self.dados = (0, 0)
         self.jogadores = []
         self.tabuleiro_casas = self.criar_tabuleiro_completo()
@@ -48,7 +48,9 @@ class Jogo:
         self.tabuleiro_visual = Tabuleiro(resource_path('app/static/tabuleiro.jpg'))
         self.log = None
         self.popup_compra = None
-        self.botao_rolar = None
+        self.botoes_jogo = {}
+        self.menu_gerenciamento = None
+        self.menu_troca = None
 
         # Componentes do menu
         self._inicializar_menu()
@@ -93,21 +95,47 @@ class Jogo:
     def criar_tabuleiro_completo(self):
         """Cria a lista de objetos de Espaco que compõem o tabuleiro."""
         return [
-            EspacoAcao("GO", "nada"), Propriedade("Wreck Room", "terreno", 60, 2, "Marrom"), EspacoAcao("Community Chest", "sorte", 50),
-            Propriedade("Boiler Room", "terreno", 60, 4, "Marrom"), EspacoAcao("Formation Fee", "imposto", 200), Propriedade("Red Van", "estacao", 200, 0, "Branco"),
-            Propriedade("Tennis Courts", "terreno", 100, 6, "Azul Claro"), EspacoAcao("Chance", "sorte", 100), Propriedade("Laundry Room", "terreno", 100, 6, "Azul Claro"),
-            Propriedade("Weight Room", "terreno", 120, 8, "Azul Claro"), EspacoAcao("Jail (Visiting)", "nada"), Propriedade("The Dorm", "terreno", 140, 10, "Rosa"),
-            Propriedade("Kenrick Light and Magic", "companhia", 150, 0, "Branco"), Propriedade("The Library", "terreno", 140, 10, "Rosa"),
-            Propriedade("The Auditorium", "terreno", 160, 12, "Rosa"), Propriedade("Silver Van", "estacao", 200, 0, "Branco"),
-            Propriedade("The Gym", "terreno", 180, 14, "Laranja"), EspacoAcao("Community Chest", "sorte", 50), Propriedade("The Heights", "terreno", 180, 14, "Laranja"),
-            Propriedade("The Rectory", "terreno", 200, 16, "Laranja"), EspacoAcao("Free Parking", "nada"), Propriedade("The Lobby", "terreno", 220, 18, "Vermelho"),
-            EspacoAcao("Chance", "sorte", 100), Propriedade("The Courtyard", "terreno", 220, 18, "Vermelho"), Propriedade("Priest Dining Room", "terreno", 240, 20, "Vermelho"),
-            Propriedade("White Van", "estacao", 200, 0, "Branco"), Propriedade("Convent", "terreno", 260, 22, "Amarelo"),
-            Propriedade("Mary Mother of the Word Chapel", "terreno", 260, 22, "Amarelo"), Propriedade("Student Services", "companhia", 150, 0, "Branco"),
-            Propriedade("St. Charles Chapel", "terreno", 280, 24, "Amarelo"), EspacoAcao("Go to Jail", "prisao"), Propriedade("Glennon Lounge", "terreno", 300, 26, "Verde"),
-            Propriedade("Priest's Lounge", "terreno", 300, 26, "Verde"), EspacoAcao("Community Chest", "sorte", 50), Propriedade("Kenrick Lounge", "terreno", 320, 28, "Verde"),
-            Propriedade("Sisters' Car", "estacao", 200, 0, "Branco"), EspacoAcao("Chance", "sorte", 100), Propriedade("St. Joseph Chapel", "terreno", 350, 35, "Azul Escuro"),
-            EspacoAcao("Room and Board", "imposto", 75), Propriedade("The Tower", "terreno", 400, 50, "Azul Escuro")]
+            EspacoAcao("GO", "nada"),
+            Propriedade("Wreck Room", "terreno", 60, [2, 10, 30, 90, 160, 250], constants.PRECOS_CASAS["Marrom"], "Marrom"),
+            EspacoAcao("Community Chest", "sorte", 50),
+            Propriedade("Boiler Room", "terreno", 60, [4, 20, 60, 180, 320, 450], constants.PRECOS_CASAS["Marrom"], "Marrom"),
+            EspacoAcao("Formation Fee", "imposto", 200),
+            Propriedade("Red Van", "estacao", 200, [25, 50, 100, 200], 0, "Branco"),
+            Propriedade("Tennis Courts", "terreno", 100, [6, 30, 90, 270, 400, 550], constants.PRECOS_CASAS["Azul Claro"], "Azul Claro"),
+            EspacoAcao("Chance", "sorte", 100),
+            Propriedade("Laundry Room", "terreno", 100, [6, 30, 90, 270, 400, 550], constants.PRECOS_CASAS["Azul Claro"], "Azul Claro"),
+            Propriedade("Weight Room", "terreno", 120, [8, 40, 100, 300, 450, 600], constants.PRECOS_CASAS["Azul Claro"], "Azul Claro"),
+            EspacoAcao("Jail (Visiting)", "nada"),
+            Propriedade("The Dorm", "terreno", 140, [10, 50, 150, 450, 625, 750], constants.PRECOS_CASAS["Rosa"], "Rosa"),
+            Propriedade("Kenrick Light & Magic", "companhia", 150, [4, 10], 0, "Branco"),
+            Propriedade("The Library", "terreno", 140, [10, 50, 150, 450, 625, 750], constants.PRECOS_CASAS["Rosa"], "Rosa"),
+            Propriedade("The Auditorium", "terreno", 160, [12, 60, 180, 500, 700, 900], constants.PRECOS_CASAS["Rosa"], "Rosa"),
+            Propriedade("Silver Van", "estacao", 200, [25, 50, 100, 200], 0, "Branco"),
+            Propriedade("The Gym", "terreno", 180, [14, 70, 200, 550, 750, 950], constants.PRECOS_CASAS["Laranja"], "Laranja"),
+            EspacoAcao("Community Chest", "sorte", 50),
+            Propriedade("The Heights", "terreno", 180, [14, 70, 200, 550, 750, 950], constants.PRECOS_CASAS["Laranja"], "Laranja"),
+            Propriedade("The Rectory", "terreno", 200, [16, 80, 220, 600, 800, 1000], constants.PRECOS_CASAS["Laranja"], "Laranja"),
+            EspacoAcao("Free Parking", "nada"),
+            Propriedade("The Lobby", "terreno", 220, [18, 90, 250, 700, 875, 1050], constants.PRECOS_CASAS["Vermelho"], "Vermelho"),
+            EspacoAcao("Chance", "sorte", 100),
+            Propriedade("The Courtyard", "terreno", 220, [18, 90, 250, 700, 875, 1050], constants.PRECOS_CASAS["Vermelho"], "Vermelho"),
+            Propriedade("Priest Dining Room", "terreno", 240, [20, 100, 300, 750, 925, 1100], constants.PRECOS_CASAS["Vermelho"], "Vermelho"),
+            Propriedade("White Van", "estacao", 200, [25, 50, 100, 200], 0, "Branco"),
+            Propriedade("Convent", "terreno", 260, [22, 110, 330, 800, 975, 1150], constants.PRECOS_CASAS["Amarelo"], "Amarelo"),
+            Propriedade("Mary Mother of the Word Chapel", "terreno", 260, [22, 110, 330, 800, 975, 1150], constants.PRECOS_CASAS["Amarelo"], "Amarelo"),
+            Propriedade("Student Services", "companhia", 150, [4, 10], 0, "Branco"),
+            Propriedade("St. Charles Chapel", "terreno", 280, [24, 120, 360, 850, 1025, 1200], constants.PRECOS_CASAS["Amarelo"], "Amarelo"),
+            EspacoAcao("Go to Jail", "prisao"),
+            Propriedade("Glennon Lounge", "terreno", 300, [26, 130, 390, 900, 1100, 1275], constants.PRECOS_CASAS["Verde"], "Verde"),
+            Propriedade("Priest's Lounge", "terreno", 300, [26, 130, 390, 900, 1100, 1275], constants.PRECOS_CASAS["Verde"], "Verde"),
+            EspacoAcao("Community Chest", "sorte", 50),
+            Propriedade("Kenrick Lounge", "terreno", 320, [28, 150, 450, 1000, 1200, 1400], constants.PRECOS_CASAS["Verde"], "Verde"),
+            Propriedade("Sisters' Car", "estacao", 200, [25, 50, 100, 200], 0, "Branco"),
+            EspacoAcao("Chance", "sorte", 100),
+            Propriedade("St. Joseph Chapel", "terreno", 350, [35, 175, 500, 1100, 1300, 1500], constants.PRECOS_CASAS["Azul Escuro"], "Azul Escuro"),
+            EspacoAcao("Room and Board", "imposto", 75),
+            Propriedade("The Tower", "terreno", 400, [50, 200, 600, 1400, 1700, 2000], constants.PRECOS_CASAS["Azul Escuro"], "Azul Escuro")
+        ]
 
     def rodar(self):
         """Inicia e mantém o loop principal do jogo."""
@@ -116,6 +144,10 @@ class Jogo:
                 self._rodar_menu()
             elif self.game_state == 'JOGANDO':
                 self._rodar_jogo()
+            elif self.game_state == 'GERENCIAR':
+                self._rodar_gerenciar()
+            elif self.game_state == 'TROCAR':
+                self._rodar_troca()
             
             self.clock.tick(60)
 
@@ -148,7 +180,11 @@ class Jogo:
         self.log = Log(constants.LADO_MAXIMO_TABULEIRO + 60, 470, log_largura, 160)
         self.log.adicionar("Bem-vindo ao Seminopoly!")
         self.log.adicionar(f"Ordem: {', '.join([j.nome for j in self.jogadores])}")
-        self.botao_rolar = Botao(constants.LADO_MAXIMO_TABULEIRO + 200, 640, 150, 50, "Rolar Dados", constants.VERDE, (0, 200, 0))
+        
+        self.botoes_jogo['trocar'] = Botao(constants.LADO_MAXIMO_TABULEIRO + 20, 640, 120, 50, "Trocar", constants.CINZA, (150, 150, 150))
+        self.botoes_jogo['gerenciar'] = Botao(constants.LADO_MAXIMO_TABULEIRO + 150, 640, 120, 50, "Gerenciar", constants.CINZA, (150, 150, 150))
+        self.botoes_jogo['rolar'] = Botao(constants.LADO_MAXIMO_TABULEIRO + 280, 640, 140, 50, "Rolar Dados", constants.VERDE, (0, 200, 0))
+
         self.popup_compra = Popup("", "")
         self.estado_turno = 'ESPERANDO_ROLAGEM'
         self.game_state = 'JOGANDO'
@@ -173,11 +209,57 @@ class Jogo:
 
         self._desenhar_jogo(mouse_pos)
 
+    def _rodar_gerenciar(self):
+        """Executa a lógica do menu de gerenciamento."""
+        mouse_pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: self.finalizar()
+            if self.log.handle_mouse_event(event, mouse_pos): continue
+            
+            if self.menu_gerenciamento:
+                acao = self.menu_gerenciamento.handle_event(event)
+                if acao == 'VOLTAR':
+                    self.game_state = 'JOGANDO'
+                    self.menu_gerenciamento = None
+        
+        self._desenhar_jogo(mouse_pos)
+
+    def _rodar_troca(self):
+        """Executa a lógica do menu de troca."""
+        mouse_pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: self.finalizar()
+            if self.log.handle_mouse_event(event, mouse_pos): continue
+
+            if self.menu_troca:
+                res = self.menu_troca.handle_event(event)
+                if res == 'FECHAR':
+                    self.game_state = 'JOGANDO'
+                    self.menu_troca = None
+        
+        self._desenhar_jogo(mouse_pos)
+
     def _handle_eventos_jogo(self, event, mouse_pos, jogador_atual):
         """Processa cliques de mouse durante o jogo."""
         if event.type == pygame.MOUSEBUTTONDOWN:
+            # Botões de Ação (Gerenciar, Trocar)
+            if self.estado_turno == 'ESPERANDO_ROLAGEM' and not jogador_atual.is_ai:
+                if self.botoes_jogo['gerenciar'].foi_clicado(mouse_pos):
+                    self.menu_gerenciamento = MenuGerenciar(jogador_atual, self.log)
+                    self.game_state = 'GERENCIAR'
+                    return
+                
+                if self.botoes_jogo['trocar'].foi_clicado(mouse_pos):
+                    oponentes = [j for j in self.jogadores if j != jogador_atual and not j.checar_falencia()]
+                    if oponentes:
+                        self.menu_troca = MenuTroca(jogador_atual, oponentes, self.log)
+                        self.game_state = 'TROCAR'
+                    else:
+                        self.log.adicionar("Nenhum jogador disponível para trocar.")
+                    return
+
             # Ação de rolar os dados
-            if self.estado_turno == 'ESPERANDO_ROLAGEM' and not jogador_atual.is_ai and self.botao_rolar.foi_clicado(mouse_pos):
+            if self.estado_turno == 'ESPERANDO_ROLAGEM' and not jogador_atual.is_ai and self.botoes_jogo['rolar'].foi_clicado(mouse_pos):
                 self._executar_turno_humano(jogador_atual)
             # Ação do pop-up de compra
             elif self.estado_turno == 'ACAO' and self.popup_compra.ativo:
@@ -217,6 +299,17 @@ class Jogo:
         self.log.adicionar("="*10)
         self.log.adicionar(f"Turno de {jogador_atual.nome}...")
 
+        # IA constrói casas se tiver monopólio
+        jogador_atual.atualizar_monopolios()
+        for cor in jogador_atual.monopolios:
+            props_do_grupo = [p for p in jogador_atual.propriedades if p.cor == cor]
+            min_casas = min(p.num_casas for p in props_do_grupo)
+            for p in props_do_grupo:
+                if p.num_casas == min_casas and jogador_atual.dinheiro > p.preco_casa * 2 and p.num_casas < 5:
+                    jogador_atual.dinheiro -= p.preco_casa
+                    p.num_casas += 1
+                    self.log.adicionar(f"[IA] Construiu casa em {p.nome}.")
+
         if jogador_atual.esta_preso:
             saiu, dados_rolados = jogador_atual.tentar_sair_da_prisao(self.log)
             self.dados = dados_rolados
@@ -234,9 +327,9 @@ class Jogo:
             casa_atual.acao(jogador_atual, self, sum(self.dados), self.log)
 
             # Lógica de decisão de compra da IA
-            if isinstance(casa_atual, Propriedade) and not casa_atual.dono and jogador_atual.dinheiro > casa_atual.preco * 2:
+            if isinstance(casa_atual, Propriedade) and not casa_atual.dono and jogador_atual.dinheiro > casa_atual.preco * 1.5:
                 jogador_atual.comprar_propriedade(casa_atual)
-                self.log.adicionar(f"{jogador_atual.nome} comprou {casa_atual.nome}.")
+                self.log.adicionar(f"[IA] {jogador_atual.nome} comprou {casa_atual.nome}.")
 
         if self.dados[0] != self.dados[1]:
             self.proximo_jogador()
@@ -267,15 +360,21 @@ class Jogo:
             jogadores_falidos = set(self.jogadores) - set(jogadores_ativos)
             for j in jogadores_falidos:
                 self.log.adicionar(f"!!! {j.nome} faliu e está fora do jogo !!!")
+                # Libera as propriedades do jogador falido
                 for prop in j.propriedades:
-                    prop.dono = None  # Libera as propriedades
+                    prop.dono = None
+                    prop.num_casas = 0
+                    prop.hipotecada = False
             self.jogadores = jogadores_ativos
+            # Garante que o índice do jogador da vez seja válido
+            self.jogador_da_vez_idx %= len(self.jogadores) if self.jogadores else 0
         
         if len(self.jogadores) <= 1:
             vencedor = self.jogadores[0].nome if self.jogadores else "Ninguém"
             self.log.adicionar("="*20)
             self.log.adicionar(f"FIM DE JOGO! VENCEDOR: {vencedor}")
             self.estado_turno = 'FIM_DE_JOGO'
+            self.game_state = 'FIM_DE_JOGO'
 
     def _desenhar_menu(self, mouse_pos):
         """Desenha a tela do menu principal."""
@@ -303,7 +402,25 @@ class Jogo:
         self.tela.fill(constants.FUNDO_ESCURO)
         self.tabuleiro_visual.desenhar(self.tela)
         desenhar_painel_info(self.tela, self, self.log)
-        self.botao_rolar.desenhar(self.tela, mouse_pos)
+        
+        for btn in self.botoes_jogo.values():
+            btn.desenhar(self.tela, mouse_pos)
+
+        # Desenha indicadores de hipoteca e casas
+        for i, espaco in enumerate(self.tabuleiro_casas):
+            if isinstance(espaco, Propriedade):
+                px, py = constants.POSICOES_PIXEL[i]
+                if espaco.hipotecada:
+                    pygame.draw.circle(self.tela, constants.VERMELHO, (int(px), int(py)), 7)
+                if espaco.num_casas > 0:
+                    cor_casa = constants.VERMELHO if espaco.num_casas == 5 else constants.VERDE
+                    tamanho_casa = 15 if espaco.num_casas == 5 else 10
+                    # Desenha 1-4 casas ou 1 hotel
+                    if espaco.num_casas == 5:
+                        pygame.draw.rect(self.tela, cor_casa, (px - 8, py - 30, tamanho_casa, tamanho_casa))
+                    else:
+                        for k in range(espaco.num_casas):
+                            pygame.draw.rect(self.tela, cor_casa, (px + (k*12) - 24, py - 30, tamanho_casa, tamanho_casa))
 
         # Desenha os peões dos jogadores
         contagem_pos = {}
@@ -318,6 +435,13 @@ class Jogo:
             contagem_pos[pos_idx] += 1
 
         self.popup_compra.desenhar(self.tela, mouse_pos)
+        
+        # Desenha menus modais por cima de tudo
+        if self.menu_gerenciamento:
+            self.menu_gerenciamento.desenhar(self.tela, mouse_pos)
+        if self.menu_troca:
+            self.menu_troca.desenhar(self.tela, mouse_pos)
+
         pygame.display.flip()
 
     def finalizar(self):

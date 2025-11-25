@@ -21,12 +21,24 @@ COR_JOGADOR = (200, 0, 0)
 COR_SCROLL_TRACK = (50, 50, 50)
 COR_SCROLL_THUMB = (150, 150, 150)
 FUNDO_ESCURO = (10, 10, 25)
+FUNDO_MODAL = (40, 40, 70)
 
 # --- FONTES ---
 pygame.init()
 FONTE_PADRAO = pygame.font.SysFont('Arial', 18)
 FONTE_TITULO = pygame.font.SysFont('Arial', 24, True)
 FONTE_MENU_TITULO = pygame.font.SysFont('Arial', 72, True)
+
+# --- REGRAS DO JOGO ---
+MONOPOLY_SETS = {
+    "Marrom": 2, "Azul Claro": 3, "Rosa": 3, "Laranja": 3,
+    "Vermelho": 3, "Amarelo": 3, "Verde": 3, "Azul Escuro": 2
+}
+
+PRECOS_CASAS = {
+    "Marrom": 50, "Azul Claro": 50, "Rosa": 100, "Laranja": 100,
+    "Vermelho": 150, "Amarelo": 150, "Verde": 200, "Azul Escuro": 200
+}
 
 # --- CONFIGURAÇÕES DO TABULEIRO ---
 LADO_MAXIMO_TABULEIRO = ALTURA_TELA - 40
