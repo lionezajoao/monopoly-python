@@ -205,7 +205,7 @@ def desenhar_dados(tela, d, x, y):
 
 def desenhar_painel_info(tela, jogo, log):
     """Desenha o painel de informações com o status de cada jogador."""
-    px = constants.LADO_MAXIMO_TABULEIRO + 60
+    px = constants.LADO_MAXIMO_TABULEIRO + 40
     for i, j in enumerate(jogo.jogadores):
         yb = 20 + i * 110
         # Destaca o jogador da vez
@@ -223,7 +223,7 @@ def desenhar_painel_info(tela, jogo, log):
             tela.blit(constants.FONTE_PADRAO.render("Na Prisão", True, constants.VERMELHO), (px + 20, yb + 75))
 
     log.desenhar(tela)
-    desenhar_dados(tela, jogo.dados, px + 20, 640)
+    desenhar_dados(tela, jogo.dados, px + 440, 640)
 
 
 class MenuGerenciar:
