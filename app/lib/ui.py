@@ -12,12 +12,13 @@ from utils import constants
 
 class Botao:
     """Cria um botão retangular clicável com texto e cores personalizáveis."""
-    def __init__(self, x, y, l, h, texto, cor, cor_h, fonte=constants.FONTE_TITULO):
+    def __init__(self, x, y, l, h, texto, cor, cor_h, fonte=constants.FONTE_TITULO, data=None):
         self.rect = pygame.Rect(x, y, l, h)
         self.texto = texto
         self.cor = cor
         self.cor_h = cor_h  # Cor ao passar o mouse (hover)
         self.fonte = fonte
+        self.data = data
 
     def desenhar(self, tela, mouse):
         """Desenha o botão, mudando de cor se o mouse estiver sobre ele."""
@@ -223,3 +224,323 @@ def desenhar_painel_info(tela, jogo, log):
 
     log.desenhar(tela)
     desenhar_dados(tela, jogo.dados, px + 20, 640)
+
+
+class MenuGerenciar:
+    """Menu para gerenciar propriedades (casas, hipotecas)."""
+    def __init__(self, jogador, log):
+        self.jogador = jogador
+        self.log = log
+        self.jogador.atualizar_monopolios()
+        self.botoes_acao = []
+        self.botao_voltar = Botao(constants.LARGURA_TELA/2 - 100, constants.ALTURA_TELA - 80, 200, 50, "Voltar", constants.VERMELHO, (255, 50, 50))
+        self.rect = pygame.Rect(0, 0, 700, 600)
+        self.rect.center = (constants.LARGURA_TELA/2, constants.ALTURA_TELA/2)
+        self.grupos = self.jogador.get_propriedades_por_cor()
+
+    def handle_event(self, event):
+        """Processa eventos de mouse para o menu."""
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.botao_voltar.foi_clicado(event.pos):
+                return 'VOLTAR'
+            
+            for botao in self.botoes_acao:
+                if botao.foi_clicado(event.pos):
+                    prop, acao = botao.data 
+                    if acao == 'comprar': self.comprar_casa(prop)
+                    elif acao == 'vender': self.vender_casa(prop)
+                    elif acao == 'hipoteca': self.toggle_hipoteca(prop)
+                    return 'ACAO'
+        return None
+
+    def comprar_casa(self, prop):
+        """Tenta comprar uma casa ou hotel em uma propriedade."""
+        if prop.num_casas >= 5:
+            self.log.adicionar("Já possui um hotel!")
+            return
+        if self.jogador.dinheiro < prop.preco_casa:
+            self.log.adicionar("Dinheiro insuficiente!")
+            return
+        
+        # Garante construção uniforme
+        props_do_grupo = self.grupos[prop.cor]
+        min_casas = min(p.num_casas for p in props_do_grupo)
+        if prop.num_casas > min_casas:
+            self.log.adicionar("Construção deve ser uniforme no grupo!")
+            return
+
+        self.jogador.dinheiro -= prop.preco_casa
+        prop.num_casas += 1
+        tipo = "hotel" if prop.num_casas == 5 else "casa"
+        self.log.adicionar(f"Comprou {tipo} em {prop.nome}.")
+
+    def vender_casa(self, prop):
+        """Tenta vender uma casa ou hotel de uma propriedade."""
+        if prop.num_casas <= 0:
+            self.log.adicionar("Nenhuma casa para vender!")
+            return
+
+        # Garante venda uniforme
+        props_do_grupo = self.grupos[prop.cor]
+        max_casas = max(p.num_casas for p in props_do_grupo)
+        if prop.num_casas < max_casas:
+            self.log.adicionar("Venda deve ser uniforme no grupo!")
+            return
+
+        preco_venda = prop.preco_casa // 2
+        self.jogador.dinheiro += preco_venda
+        prop.num_casas -= 1
+        tipo = "hotel" if prop.num_casas == 4 else "casa"
+        self.log.adicionar(f"Vendeu {tipo} de {prop.nome} por ${preco_venda}.")
+
+    def toggle_hipoteca(self, prop):
+        """Hipoteca ou resgata uma propriedade."""
+        if prop.num_casas > 0:
+            self.log.adicionar("Venda as casas antes de hipotecar!")
+            return
+
+        valor_hipoteca = prop.preco // 2
+        valor_resgate = int(valor_hipoteca * 1.1)
+
+        if prop.hipotecada:
+            if self.jogador.dinheiro >= valor_resgate:
+                self.jogador.dinheiro -= valor_resgate
+                prop.hipotecada = False
+                self.log.adicionar(f"Resgatou {prop.nome} por ${valor_resgate}.")
+            else:
+                self.log.adicionar("Dinheiro insuficiente para resgatar.")
+        else:
+            self.jogador.dinheiro += valor_hipoteca
+            prop.hipotecada = True
+            self.log.adicionar(f"Hipotecou {prop.nome} por ${valor_hipoteca}.")
+
+    def desenhar(self, tela, mouse_pos):
+        """Desenha o menu de gerenciamento na tela."""
+        overlay = pygame.Surface(tela.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        tela.blit(overlay, (0, 0))
+        
+        pygame.draw.rect(tela, constants.FUNDO_MODAL, self.rect, border_radius=15)
+        pygame.draw.rect(tela, constants.BRANCO, self.rect, 3, border_radius=15)
+        
+        titulo_surf = constants.FONTE_TITULO.render(f"Gerenciar - {self.jogador.nome} (${self.jogador.dinheiro})", True, constants.BRANCO)
+        tela.blit(titulo_surf, titulo_surf.get_rect(center=(self.rect.centerx, self.rect.y + 40)))
+        
+        self.botao_voltar.desenhar(tela, mouse_pos)
+        self.botoes_acao.clear()
+        
+        y_offset = self.rect.y + 80
+        for cor, propriedades in sorted(self.grupos.items()):
+            if y_offset > self.rect.bottom - 100: break 
+            
+            tem_monopolio = self.jogador.tem_monopolio(cor)
+            cor_titulo = constants.VERDE if tem_monopolio else constants.BRANCO
+            
+            titulo_grupo = constants.FONTE_TITULO.render(f"--- Grupo: {cor} {'(Monopólio)' if tem_monopolio else ''} ---", True, cor_titulo)
+            tela.blit(titulo_grupo, (self.rect.x + 20, y_offset))
+            y_offset += 35
+
+            for prop in propriedades:
+                casas_str = "H" if prop.num_casas == 5 else str(prop.num_casas)
+                texto_prop = constants.FONTE_PADRAO.render(f"{prop.nome} (Casas: {casas_str})", True, constants.BRANCO)
+                tela.blit(texto_prop, (self.rect.x + 30, y_offset + 5))
+
+                if tem_monopolio:
+                    if prop.num_casas < 5:
+                        btn_comprar = Botao(self.rect.right - 100, y_offset, 30, 30, "+", constants.VERDE, (0, 255, 0), constants.FONTE_PADRAO, (prop, 'comprar'))
+                        btn_comprar.desenhar(tela, mouse_pos)
+                        self.botoes_acao.append(btn_comprar)
+                    if prop.num_casas > 0:
+                        btn_vender = Botao(self.rect.right - 50, y_offset, 30, 30, "-", constants.VERMELHO, (255, 50, 50), constants.FONTE_PADRAO, (prop, 'vender'))
+                        btn_vender.desenhar(tela, mouse_pos)
+                        self.botoes_acao.append(btn_vender)
+                
+                cor_btn_m = constants.VERMELHO if prop.hipotecada else constants.CINZA
+                txt_btn = "R" if prop.hipotecada else "H"
+                btn_hipoteca = Botao(self.rect.right - 150, y_offset, 40, 30, txt_btn, cor_btn_m, (200, 200, 0), constants.FONTE_PADRAO, (prop, 'hipoteca'))
+                btn_hipoteca.desenhar(tela, mouse_pos)
+                self.botoes_acao.append(btn_hipoteca)
+
+                y_offset += 30
+            y_offset += 10
+
+class MenuTroca:
+    """Menu para realizar trocas de propriedades e dinheiro entre jogadores."""
+    def __init__(self, jogador_ativo, oponentes, log):
+        self.jogador_ativo = jogador_ativo
+        self.oponentes = oponentes
+        self.oponente_selecionado = oponentes[0] if oponentes else None
+        self.log = log
+        self.rect = pygame.Rect(100, 50, constants.LARGURA_TELA - 200, constants.ALTURA_TELA - 100)
+        
+        self.estado = 'EDICAO'  # EDICAO ou CONFIRMACAO
+        self.oferta_dinheiro = 0
+        self.pedido_dinheiro = 0
+        self.oferta_props = [] 
+        self.pedido_props = [] 
+        
+        self.btn_fechar = Botao(self.rect.right - 120, self.rect.bottom - 60, 100, 40, "Cancelar", constants.VERMELHO, (255,100,100))
+        self.btn_propor = Botao(self.rect.centerx - 75, self.rect.bottom - 60, 150, 40, "Propor", constants.VERDE, (100,255,100))
+        self.btn_aceitar = Botao(self.rect.centerx - 110, self.rect.bottom - 60, 100, 40, "Aceitar", constants.VERDE, (0,255,0))
+        self.btn_recusar = Botao(self.rect.centerx + 10, self.rect.bottom - 60, 100, 40, "Recusar", constants.VERMELHO, (255,0,0))
+
+        self.botoes_oponentes = []
+        x_op = self.rect.x + 20
+        for op in self.oponentes:
+            b = Botao(x_op, self.rect.y + 50, 120, 30, op.nome, constants.CINZA, (150,150,150), fonte=constants.FONTE_PADRAO, data=op)
+            self.botoes_oponentes.append(b)
+            x_op += 130
+
+    def avaliar_troca_ia(self):
+        """Lógica simples para a IA decidir se aceita a troca."""
+        valor_dado = self.pedido_dinheiro + sum(p.preco for p in self.pedido_props)
+        valor_recebido = self.oferta_dinheiro + sum(p.preco for p in self.oferta_props)
+        # IA valoriza completar monopólios
+        for p in self.oferta_props:
+            if self.oponente_selecionado.tem_monopolio(p.cor):
+                valor_recebido += 100
+        return valor_recebido >= valor_dado
+
+    def executar_troca(self):
+        """Executa a troca de ativos entre os jogadores."""
+        # Troca de dinheiro
+        self.jogador_ativo.dinheiro -= self.oferta_dinheiro
+        self.oponente_selecionado.dinheiro += self.oferta_dinheiro
+        self.oponente_selecionado.dinheiro -= self.pedido_dinheiro
+        self.jogador_ativo.dinheiro += self.pedido_dinheiro
+        
+        # Troca de propriedades ofertadas
+        for p in self.oferta_props:
+            p.dono = self.oponente_selecionado
+            self.oponente_selecionado.propriedades.append(p)
+            self.jogador_ativo.propriedades.remove(p)
+            
+        # Troca de propriedades pedidas
+        for p in self.pedido_props:
+            p.dono = self.jogador_ativo
+            self.jogador_ativo.propriedades.append(p)
+            self.oponente_selecionado.propriedades.remove(p)
+
+        self.jogador_ativo.atualizar_monopolios()
+        self.oponente_selecionado.atualizar_monopolios()
+        self.log.adicionar("Troca realizada com sucesso!")
+
+    def handle_event(self, event):
+        """Processa eventos de mouse para o menu de troca."""
+        if event.type != pygame.MOUSEBUTTONDOWN:
+            return None
+        
+        pos = event.pos
+        if self.estado == 'CONFIRMACAO':
+            if self.btn_aceitar.foi_clicado(pos):
+                self.executar_troca()
+                return 'FECHAR'
+            if self.btn_recusar.foi_clicado(pos):
+                self.log.adicionar(f"{self.oponente_selecionado.nome} recusou a oferta.")
+                return 'FECHAR'
+            return None
+
+        if self.btn_fechar.foi_clicado(pos): return 'FECHAR'
+        
+        for btn in self.botoes_oponentes:
+            if btn.foi_clicado(pos):
+                self.oponente_selecionado = btn.data
+                self.pedido_props.clear()
+                self.pedido_dinheiro = 0
+        
+        if self.btn_propor.foi_clicado(pos):
+            if self.oponente_selecionado.is_ai:
+                if self.avaliar_troca_ia():
+                    self.executar_troca()
+                else:
+                    self.log.adicionar(f"{self.oponente_selecionado.nome} (IA) recusou a oferta.")
+                return 'FECHAR'
+            else:
+                self.estado = 'CONFIRMACAO'
+                return None
+
+        # Controles de dinheiro
+        if pygame.Rect(self.rect.x + 20, self.rect.bottom - 120, 100, 30).collidepoint(pos):
+            if self.jogador_ativo.dinheiro >= self.oferta_dinheiro + 10: self.oferta_dinheiro += 10
+        if pygame.Rect(self.rect.x + 130, self.rect.bottom - 120, 100, 30).collidepoint(pos):
+            if self.oferta_dinheiro >= 10: self.oferta_dinheiro -= 10
+        if pygame.Rect(self.rect.right - 230, self.rect.bottom - 120, 100, 30).collidepoint(pos):
+            if self.oponente_selecionado.dinheiro >= self.pedido_dinheiro + 10: self.pedido_dinheiro += 10
+        if pygame.Rect(self.rect.right - 120, self.rect.bottom - 120, 100, 30).collidepoint(pos):
+            if self.pedido_dinheiro >= 10: self.pedido_dinheiro -= 10
+
+        # Seleção de propriedades
+        y = self.rect.y + 120
+        for p in self.jogador_ativo.propriedades:
+            if pygame.Rect(self.rect.x + 20, y, 200, 25).collidepoint(pos):
+                if p in self.oferta_props: self.oferta_props.remove(p)
+                else: self.oferta_props.append(p)
+            y += 30
+            
+        if self.oponente_selecionado:
+            y = self.rect.y + 120
+            for p in self.oponente_selecionado.propriedades:
+                if pygame.Rect(self.rect.centerx + 20, y, 200, 25).collidepoint(pos):
+                    if p in self.pedido_props: self.pedido_props.remove(p)
+                    else: self.pedido_props.append(p)
+                y += 30
+        return None
+
+    def desenhar(self, tela, mouse):
+        """Desenha o menu de troca na tela."""
+        pygame.draw.rect(tela, constants.FUNDO_MODAL, self.rect, border_radius=10)
+        cor_borda = (255, 255, 0) if self.estado == 'CONFIRMACAO' else constants.BRANCO
+        pygame.draw.rect(tela, cor_borda, self.rect, 2, border_radius=10)
+        
+        titulo_str = f"{self.oponente_selecionado.nome}, aceita?" if self.estado == 'CONFIRMACAO' else "Menu de Trocas"
+        t = constants.FONTE_TITULO.render(titulo_str, True, cor_borda)
+        tela.blit(t, (self.rect.centerx - t.get_width()//2, self.rect.y + 10))
+        
+        if self.estado == 'EDICAO':
+            for btn in self.botoes_oponentes:
+                btn.cor = constants.VERDE if btn.data == self.oponente_selecionado else constants.CINZA
+                btn.desenhar(tela, mouse)
+        
+        pygame.draw.line(tela, constants.BRANCO, (self.rect.centerx, self.rect.y + 90), (self.rect.centerx, self.rect.bottom - 80))
+        
+        # Painel do jogador ativo (oferta)
+        t_eu = constants.FONTE_TITULO.render(f"{self.jogador_ativo.nome} Oferta:", True, constants.BRANCO)
+        tela.blit(t_eu, (self.rect.x + 20, self.rect.y + 90))
+        y = self.rect.y + 120
+        props_para_mostrar = self.oferta_props if self.estado == 'CONFIRMACAO' else self.jogador_ativo.propriedades
+        for p in props_para_mostrar:
+            cor = constants.VERDE if p in self.oferta_props else constants.BRANCO
+            if self.estado == 'CONFIRMACAO': cor = constants.BRANCO
+            txt = f"{p.nome} {'(Hipot.)' if p.hipotecada else ''}"
+            s = constants.FONTE_PADRAO.render(txt, True, cor)
+            tela.blit(s, (self.rect.x + 20, y)); y += 30
+            
+        # Painel do oponente (pedido)
+        if self.oponente_selecionado:
+            t_op = constants.FONTE_TITULO.render(f"{self.oponente_selecionado.nome} Pede:", True, constants.BRANCO)
+            tela.blit(t_op, (self.rect.centerx + 20, self.rect.y + 90))
+            y = self.rect.y + 120
+            props_para_mostrar = self.pedido_props if self.estado == 'CONFIRMACAO' else self.oponente_selecionado.propriedades
+            for p in props_para_mostrar:
+                cor = constants.VERDE if p in self.pedido_props else constants.BRANCO
+                if self.estado == 'CONFIRMACAO': cor = constants.BRANCO
+                txt = f"{p.nome} {'(Hipot.)' if p.hipotecada else ''}"
+                s = constants.FONTE_PADRAO.render(txt, True, cor)
+                tela.blit(s, (self.rect.centerx + 20, y)); y += 30
+        
+        # Dinheiro
+        t_din_oferta = constants.FONTE_TITULO.render(f"$ {self.oferta_dinheiro}", True, constants.VERDE)
+        tela.blit(t_din_oferta, (self.rect.x + 20, self.rect.bottom - 150))
+        t_din_pedido = constants.FONTE_TITULO.render(f"$ {self.pedido_dinheiro}", True, constants.VERMELHO)
+        tela.blit(t_din_pedido, (self.rect.right - 230, self.rect.bottom - 150))
+
+        if self.estado == 'EDICAO':
+            ts_info = constants.FONTE_PADRAO.render("[+10]  [-10]", True, constants.CINZA)
+            tela.blit(ts_info, (self.rect.x + 20, self.rect.bottom - 120))
+            tela.blit(ts_info, (self.rect.right - 230, self.rect.bottom - 120))
+            self.btn_fechar.desenhar(tela, mouse)
+            self.btn_propor.desenhar(tela, mouse)
+        elif self.estado == 'CONFIRMACAO':
+            self.btn_aceitar.desenhar(tela, mouse)
+            self.btn_recusar.desenhar(tela, mouse)
+

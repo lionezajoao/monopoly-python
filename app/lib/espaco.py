@@ -20,28 +20,38 @@ class Espaco:
 
 class Propriedade(Espaco):
     """Representa uma propriedade que pode ser comprada e ter aluguel."""
-    def __init__(self, nome, tipo, preco, aluguel_base, cor):
+    def __init__(self, nome, tipo, preco, alugueis, preco_casa, cor):
         super().__init__(nome)
         self.tipo = tipo
         self.preco = preco
-        self.aluguel_base = aluguel_base
+        self.alugueis = alugueis
+        self.preco_casa = preco_casa
         self.cor = cor
         self.dono = None
+        self.num_casas = 0  # 0=sem casa, 1-4=casas, 5=hotel
+        self.hipotecada = False
 
     def calcular_aluguel(self, rolagem_dados=0):
-        """Calcula o valor do aluguel com base no tipo e no dono."""
-        if not self.dono:
+        """Calcula o valor do aluguel com base no tipo, dono, casas e hipoteca."""
+        if not self.dono or self.hipotecada:
             return 0
+
         if self.tipo == 'terreno':
-            return self.aluguel_base
+            aluguel_base = self.alugueis[self.num_casas]
+            # Dobra o aluguel do terreno vazio se o dono tiver o monopólio
+            if self.num_casas == 0 and self.dono.tem_monopolio(self.cor):
+                return aluguel_base * 2
+            return aluguel_base
+
         if self.tipo == 'estacao':
-            # O aluguel dobra para cada estação que o dono possui
-            num_estacoes = sum(1 for p in self.dono.propriedades if p.tipo == 'estacao')
-            return 25 * (2 ** (num_estacoes - 1))
+            # O aluguel depende do número de estações não hipotecadas
+            num_estacoes = sum(1 for p in self.dono.propriedades if p.tipo == 'estacao' and not p.hipotecada)
+            return self.alugueis[num_estacoes - 1] if num_estacoes > 0 else 0
+
         if self.tipo == 'companhia':
-            # O aluguel é baseado na rolagem dos dados
-            num_companhias = sum(1 for p in self.dono.propriedades if p.tipo == 'companhia')
-            multiplicador = 10 if num_companhias == 2 else 4
+            # O aluguel é baseado na rolagem dos dados e no número de companhias
+            num_companhias = sum(1 for p in self.dono.propriedades if p.tipo == 'companhia' and not p.hipotecada)
+            multiplicador = self.alugueis[num_companhias - 1] if num_companhias > 0 else 0
             return rolagem_dados * multiplicador
         return 0
 
@@ -52,9 +62,12 @@ class Propriedade(Espaco):
         """
         super().acao(jogador, jogo, rolagem_dados, log)
         if self.dono and self.dono != jogador:
-            aluguel = self.calcular_aluguel(rolagem_dados)
-            log.adicionar(f"Propriedade de {self.dono.nome}. Pagar aluguel de ${aluguel}.")
-            jogador.pagar_aluguel(aluguel, self.dono)
+            if self.hipotecada:
+                log.adicionar("Propriedade hipotecada. Sem aluguel.")
+            else:
+                aluguel = self.calcular_aluguel(rolagem_dados)
+                log.adicionar(f"Propriedade de {self.dono.nome}. Pagar aluguel de ${aluguel}.")
+                jogador.pagar_aluguel(aluguel, self.dono)
 
 class EspacoAcao(Espaco):
     """Representa um espaço que dispara uma ação específica (imposto, sorte, etc.)."""
